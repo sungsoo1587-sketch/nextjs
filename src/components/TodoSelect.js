@@ -1,15 +1,45 @@
-import React from "react";
+import { React, useState } from "react";
 import "./TodoSelect.css"
 
 
-const TodoSelect = ({options, onChangeUser}) => {
+const TodoSelect = () => {
+
+  // app.js에 todos 배열에서 뽑아오고 싶은데..
+  const userList = [
+    {
+      id: 1,
+      username: 'all',
+      
+    },
+    {
+      id: 2,
+      username: '문상훈',
+
+    },
+    {
+        id: 3,
+        username: '우영우',
+    },
+    {
+        id: 4,
+        username: '나선욱',
+        
+    },
+  ];
+  const [Selected, setSelected] = useState("");
+
+  const handleSelect = (e) => {
+    setSelected(e.target.value);
+  };
     return (
         <div>
-          <select options={options} onChangeUser={onChangeUser}>
-            <option value="" selected disabled hidden>유저를 선택하세요</option>
-            <option>111</option>
-            <option>222</option>
-            <option>333</option>
+          <select onChange={handleSelect} defaultValue={Selected}>
+          {/* app.js에 todos에서 뽑아오고 싶은데.. */}
+            {userList.map((user) => (
+              <option value={user.username} key={user.id}>
+                {user.username}
+              </option>
+            ))}
           </select>
         </div>
     );

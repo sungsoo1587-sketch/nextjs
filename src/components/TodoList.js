@@ -4,17 +4,21 @@ import './TodoList.css';
 
 // App.js에서 props 받아오기
 const TodoList = ({ todos, onRemove, onToggle, completed }) => {
+    
     return (
-        <ul className="TodoList">
-            {todos.map(todo => (
-                <TodoListItem 
-                    todo={todo} key={todo.id} 
-                    onRemove={onRemove} 
-                    onToggle={onToggle} 
-                    completed={completed} 
-                />
-            ))}
-        </ul>
+        <>
+            <h2 className='TodoList-title'>{ todos.category }</h2>
+            <ul className="TodoList">
+                {todos.map(todo => (
+                    <TodoListItem 
+                        todo={todo} key={todo.id} 
+                        onRemove={onRemove} 
+                        onToggle={onToggle} 
+                        completed={completed} 
+                    />
+                ))}
+            </ul>
+        </>
     )
 }
 

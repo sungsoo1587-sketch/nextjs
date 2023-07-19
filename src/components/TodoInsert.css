@@ -16,6 +16,9 @@
 .TodoInsert input::placeholder {
   color: #999;
 }
+.TodoInsert input.userInput {
+  width: 50%;
+}
 button {
   background: #acfff7;
   border-radius: 4px;

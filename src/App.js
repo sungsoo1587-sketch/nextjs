@@ -8,47 +8,69 @@ import TodoSelect from '../src/components/TodoSelect';
 
 
 const App = () => {
-
-    const [todos, setTodos] = useState
-        ([
+    
+    const [todos, setTodos] = useState([
         {
             id: 1,
+            username: '문상훈',
             text: '리액트 TodoList 만들기',
             checked: true,
-            // completed: true
+            category: 'todo List',
+
         },
         {
             id: 2,
+            username: '우영우',
             text: '리액트 스터디 참여하기',
             checked: false,
-            // completed: false
+            category: 'wish List',
         },
         {
             id: 3,
+            username: '나선욱',
             text: '눈누난나 퇴근',
             checked: false,
-            // completed: false
+            category: 'todo List',
+            
         },
-        ])
+    ])
+    const [inputs, setInputs] = useState({
+        username: '',
+        text: ''
+    });
+    const { username, text } = inputs; // 비구조화 할당을 통해 값 추출
+    const onChange = (e) => {
+        const { name, value } = e.target; //e.target 에서 name 과 value 를 추출
+        setInputs({
+            ...inputs, //기존 input 객체를 복사
+            [name]: value // name 키를 가진 값을 value 로 설정
+        });
+    };
 
     // *배열에 새 항목 추가*
     // 배열의 고유값 변수로 사용될 addId
     // useRef() 파라미터로 다음 id 값 넣어줌
     const addId = useRef('4');
 
-    const onInsert = useCallback(
-        text => {
+    const onInsert = (e) => {
+        e.preventDefault(); //새로고침 방지
         const todo = {
             id: addId.current,
+            username,
             text,
             checked: false,
-            completed: false
+            completed: false,
         };
-        setTodos(todos => todos.concat(todo)); // concat으로 todos배열에 todo를 추가해서 새로운 배열을 생성
-        addId.current += 1; //addId 1씩 더하기
-        },
-        [],
-    );
+
+        setTodos(todos.concat(todo));
+
+        // input 비우기
+        setInputs({
+            username: '',
+            text: ''
+        });
+        addId.current += 1;
+    };
 
     const onRemove = useCallback(
         id => {
@@ -97,10 +119,22 @@ const App = () => {
     , [todos]);
 
     return (
-        <TodoTemplate todoLength={todos.length} clearComplete={clearComplete} clearAll={clearAll}>
+        <TodoTemplate 
+            todoLength={todos.length} 
+            clearComplete={clearComplete} 
+            clearAll={clearAll}>
             <TodoSelect />
-            <TodoInsert onInsert={onInsert}/>
-            <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} />
+            <TodoInsert 
+                onInsert={onInsert}
+                onChange={onChange}
+                username={username}
+                text={text}
+            />
+            <TodoList 
+                todos={todos} 
+                onRemove={onRemove} 
+                onToggle={onToggle} 
+            />
         </TodoTemplate>
     );
 };
