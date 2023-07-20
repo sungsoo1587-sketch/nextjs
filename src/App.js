@@ -51,7 +51,6 @@ const App = () => {
     // 배열의 고유값 변수로 사용될 addId
     // useRef() 파라미터로 다음 id 값 넣어줌
     const addId = useRef('4');
-
     const onInsert = (e) => {
         e.preventDefault(); //새로고침 방지
         const todo = {
@@ -61,9 +60,7 @@ const App = () => {
             checked: false,
             completed: false,
         };
-
         setTodos(todos.concat(todo));
-
         // input 비우기
         setInputs({
             username: '',
@@ -77,9 +74,7 @@ const App = () => {
         setTodos(todos => 
             todos.filter(todo => todo.id !== id)
         ); //삭제 대상의 id와 일치하지 않는 todo들은 todos 배열에 남기는 배열 재생성
-        },
-        []
-    );
+        }, []);
 
     const onToggle = useCallback(
         id => {
@@ -89,9 +84,7 @@ const App = () => {
             //todo.id === id 일때 true라면, 해당 id를 가진 todo의 checked 상태가 반대로 된(토글된) 새로운 배열을 만듦, 아니라면 그대로 이용
             ),
         )
-        },
-        []
-    );
+        },[]);
 
     // 완료 항목 일괄 삭제
     const clearComplete = useCallback(() => {
@@ -108,22 +101,21 @@ const App = () => {
     useEffect(() => {
         let num = 0
         for (var i = 0; i < todos.length; i++) {
-        if (todos[i].checked === true) {
-            num += 1
-            if (num === todos.length) {
-            alert("할 일 끝!🥳");
+            if (todos[i].checked === true) {
+                num += 1
+                if (num === todos.length) {
+                    alert("할 일 끝!🥳");
+                }
             }
         }
-        }
-    }
-    , [todos]);
+    }, [todos]);
 
     return (
         <TodoTemplate 
             todoLength={todos.length} 
             clearComplete={clearComplete} 
             clearAll={clearAll}>
-            <TodoSelect />
+            <TodoSelect todos={todos}/>
             <TodoInsert 
                 onInsert={onInsert}
                 onChange={onChange}

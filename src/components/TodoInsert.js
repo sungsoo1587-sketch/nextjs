@@ -11,7 +11,7 @@ const TodoInsert = ({ username, text, onSubmit, onChange, onInsert }) => {
                 onChange={onChange}
                 name='username'
             />
-            <input placeholder="할 일을 추가하세요"
+            <input placeholder="텍스트를 입력하세요"
                 value={text}
                 onChange={onChange}
                 name='text'

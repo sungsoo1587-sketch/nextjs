@@ -7,6 +7,7 @@ const TodoList = ({ todos, onRemove, onToggle, completed }) => {
     
     return (
         <>
+            {/* todos에서 category 체크해서 뿌려줘야하는데 */}
             <h2 className='TodoList-title'>{ todos.category }</h2>
             <ul className="TodoList">
                 {todos.map(todo => (
