@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import { initialState } from './libs/data';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [todos] = useState(initialState);
+  console.log(todos)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {todos.map((todo, index) => (
+        <div className="wrap">
+          <input 
+            type="checkbox" 
+            checked="" 
+            id={todo.id} 
+            title={todo.title} 
+            onChange={()=> console.log(1111) } 
+          />
+          <div className="type">{todo.type}</div>
+          <div className="text">{todo.text}</div>
+          <button type=''></button>
+        </div>
+    ))}
     </div>
   );
 }
