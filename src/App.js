@@ -5,6 +5,7 @@ import './App.css';
 
 function App() {
   const [todos, setTodos] = useState(initialState);
+  const [isModify, setModify] = useState();
   const [types] = useState(typeSelects);  
   const [formData, setFormData] = useState({
     type: '',
@@ -26,6 +27,7 @@ function App() {
       console.log(updated);
       return updated;
     });
+    
   };
   const buttonAdd = ()=>{
     const nextId = todos.length > 0
@@ -43,12 +45,18 @@ function App() {
     console.log(setTodos)
   }
 
-  const buttonModify = (id) => {
-    console.log(`수정${id}`)
+  const buttonModify = (todo) => {
+    console.log('수정',todo)
+    setModify(todo)
   }
   const buttonDel = (id) => {
+    const target = todos.find(todo => todo.id === id);
+    if(target && target.done===false){
+      alert('체크박스 선택해야함')
+      return;
+    }
     setTodos(prevTodos =>
-      prevTodos.filter(todo => todo.id !== id || todo.done === false)
+      prevTodos.filter(todo => todo.id !== id)
       
     )
   }
@@ -57,9 +65,8 @@ function App() {
   return (
     <div className="App">
       <div className="wrap_add">
-        <select title="타입 선택" name="type" value={formData.type}
-  onChange={handleInputChange}>
-    <option value="">타입을 선택하세요</option>
+        <select title="타입 선택" name="type" value={formData.type} onChange={handleInputChange}>
+          <option value="">타입을 선택하세요</option>
           {types.map((type) =>(
             <option value={type}>{type}</option>
           ))}
@@ -82,7 +89,7 @@ function App() {
           <div className="text">{todo.title}</div>
           <div className="text">{todo.text}</div>
           <button type="button"
-            onClick={()=> buttonModify(todo.id) } 
+            onClick={()=> buttonModify(todo) } 
           >수정</button>
           <button type="button"
             onClick={()=> buttonDel(todo.id)}
@@ -90,6 +97,9 @@ function App() {
         </div>
         
     ))}
+    {isModify &&(
+      <div>123</div>
+    )}
     </div>
   );
 }
