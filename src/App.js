@@ -101,7 +101,6 @@ function App() {
           setFormData(prev => ({ ...prev, [name]: value }));
         }}
         onSubmit={buttonAdd}
-        isModify='{false}'
         buttonTxt='추가'
       />
       
@@ -158,7 +157,6 @@ function App() {
           setModifyFormData(prev => ({ ...prev, [name]: value }));
         }}
         onSubmit={applyModify}
-        isModify={true}
         buttonTxt='수정완료'
       />
       /*
