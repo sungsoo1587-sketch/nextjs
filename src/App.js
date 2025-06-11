@@ -1,13 +1,20 @@
 import { initialState } from './libs/data';
 import { typeSelects } from './libs/data';
 import { useState } from 'react';
+import TodoForm from './components/TodoForm';
+import TodoItem from './components/TodoItem';
 import './App.css';
 
 function App() {
   const [todos, setTodos] = useState(initialState);
   const [isModify, setModify] = useState();
   const [types] = useState(typeSelects);  
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // 추가용
+    type: '',
+    title: '',
+    text: '',
+  })
+  const [modifyFormData, setModifyFormData] = useState({ // 수정용
     type: '',
     title: '',
     text: '',
@@ -19,15 +26,15 @@ function App() {
       )
     );
   };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => {
-      const updated = { ...prev, [name]: value };
-      //console.log(updated);
-      return updated;
-    });
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData(prev => {
+  //     const updated = { ...prev, [name]: value };
+  //     //console.log(updated);
+  //     return updated;
+  //   });
     
-  };
+  // };
   const buttonAdd = ()=>{
     const nextId = todos.length > 0
     ? Math.max(...todos.map(todo => todo.id)) + 1
@@ -40,7 +47,7 @@ function App() {
       done: false
     };
     setTodos(prev => [...prev, newTodo]);
-    setFormData({ id:nextId, type: formData.type, title: formData.title, text: formData.text });
+    setFormData({ id:'', type: '', title: '', text: '' });
   }
 
   const buttonModify = (todo) => {
@@ -50,7 +57,7 @@ function App() {
     }
     console.log('수정',todo)
     setModify(todo)
-    setFormData({
+    setModifyFormData({
       type: todo.type,
       title: todo.title,
       text: todo.text,
@@ -63,13 +70,13 @@ function App() {
     setTodos(prevTodos =>
       prevTodos.map(todo =>
         todo.id === isModify.id
-          ? { ...todo, ...formData }
+          ? { ...todo, ...modifyFormData }
           : todo
       )
     );
     //수정완료 후 초기화
     setModify(null);
-    setFormData({ type: '', title: '', text: '' });
+    setModifyFormData({ type: '', title: '', text: '' });
   };
   const buttonDel = (todo) => {
     console.log(todo)
@@ -86,7 +93,19 @@ function App() {
   
   return (
     <div className="App">
-      <div className="wrap_add">
+      <TodoForm
+        formData={formData}
+        types={types}
+        handleInputChange={(e) => {
+          const { name, value } = e.target;
+          setFormData(prev => ({ ...prev, [name]: value }));
+        }}
+        onSubmit={buttonAdd}
+        isModify='{false}'
+        buttonTxt='추가'
+      />
+      
+       {/* <div className="wrap_add">
         <select title="타입 선택" name="type" value={formData.type} onChange={handleInputChange}>
           <option value="">타입을 선택하세요</option>
           {types.map((type) =>(
@@ -98,8 +117,18 @@ function App() {
         <button type="button"
             onClick={()=> buttonAdd() } 
           >추가</button>
-      </div>
-      {todos.map((todo, index) => (
+      </div>  */}
+      
+
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          toggleDone={toggleDone}
+          onModify={buttonModify}
+          onDelete={buttonDel}
+        />
+        /*
         <div className={`wrap_${todo.id}`} key={todo.id}>
           <input 
             type="checkbox" 
@@ -117,9 +146,22 @@ function App() {
             onClick={()=> buttonDel(todo)}
           >삭제</button>
         </div>
+        */
         
     ))}
     {isModify &&(
+      <TodoForm
+        formData={modifyFormData}
+        types={types}
+        handleInputChange={(e) => {
+          const { name, value } = e.target;
+          setModifyFormData(prev => ({ ...prev, [name]: value }));
+        }}
+        onSubmit={applyModify}
+        isModify={true}
+        buttonTxt='수정완료'
+      />
+      /*
       <div className="wrap_add">
         <select title="타입 선택" name="type" value={formData.type} onChange={handleInputChange}>
           <option value="">타입을 선택하세요</option>
@@ -133,6 +175,7 @@ function App() {
             onClick={()=> applyModify() } 
           >수정완료</button>
       </div>
+      */
     )}
     </div>
   );
