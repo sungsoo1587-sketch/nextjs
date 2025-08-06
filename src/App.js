@@ -1,24 +1,29 @@
-import { initialState } from './libs/data';
-import { typeSelects } from './libs/data';
+import {BrowserRouter as Router, Routes, Route,Link} from 'react-router-dom';
+
 import { useState } from 'react';
+import { initialState, typeSelects } from './libs/data';
+
 import TodoForm from './components/TodoForm';
 import TodoItem from './components/TodoItem';
+import MakeReservation from './components/MakeReservation';
+
 import './App.css';
 
-function App() {
+function TodoPage() {
   const [todos, setTodos] = useState(initialState);
   const [isModify, setModify] = useState();
-  const [types] = useState(typeSelects);  
-  const [formData, setFormData] = useState({ // 추가용
+  const [types] = useState(typeSelects);
+  const [formData, setFormData] = useState({
     type: '',
     title: '',
     text: '',
-  })
-  const [modifyFormData, setModifyFormData] = useState({ // 수정용
+  });
+  const [modifyFormData, setModifyFormData] = useState({
     type: '',
     title: '',
     text: '',
-  })
+  });
+
   const toggleDone = (id) => {
     setTodos(prevTodos =>
       prevTodos.map(todo =>
@@ -26,19 +31,12 @@ function App() {
       )
     );
   };
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData(prev => {
-  //     const updated = { ...prev, [name]: value };
-  //     //console.log(updated);
-  //     return updated;
-  //   });
-    
-  // };
-  const buttonAdd = ()=>{
-    const nextId = todos.length > 0
-    ? Math.max(...todos.map(todo => todo.id)) + 1
-    : 1;
+
+  const buttonAdd = () => {
+    const nextId =
+      todos.length > 0
+        ? Math.max(...todos.map(todo => todo.id)) + 1
+        : 1;
     const newTodo = {
       id: nextId,
       type: formData.type,
@@ -47,22 +45,21 @@ function App() {
       done: false
     };
     setTodos(prev => [...prev, newTodo]);
-    setFormData({ id:'', type: '', title: '', text: '' });
-  }
+    setFormData({ type: '', title: '', text: '' });
+  };
 
   const buttonModify = (todo) => {
     if (todo && todo.done === false) {
       alert('체크박스 선택해야함');
       return;
     }
-    console.log('수정',todo)
-    setModify(todo)
+    setModify(todo);
     setModifyFormData({
       type: todo.type,
       title: todo.title,
       text: todo.text,
     });
-  }
+  };
 
   const applyModify = () => {
     if (!isModify) return;
@@ -74,25 +71,22 @@ function App() {
           : todo
       )
     );
-    //수정완료 후 초기화
     setModify(null);
     setModifyFormData({ type: '', title: '', text: '' });
   };
+
   const buttonDel = (todo) => {
-    console.log(todo)
     if (todo && todo.done === false) {
-      alert('체크박스 선택해야함')
-      return
+      alert('체크박스 선택해야함');
+      return;
     }
-
     setTodos(prevTodos =>
-      prevTodos.filter(item => item.id !== todo.id) // 현재 항목의 ID가 삭제하려는 항목의 ID와 같지 않으면(true) 이 항목 남기고 아닌거 삭제
-    )
-  }
+      prevTodos.filter(item => item.id !== todo.id)
+    );
+  };
 
-  
   return (
-    <div className="App">
+    <>
       <TodoForm
         formData={formData}
         types={types}
@@ -101,23 +95,8 @@ function App() {
           setFormData(prev => ({ ...prev, [name]: value }));
         }}
         onSubmit={buttonAdd}
-        buttonTxt='추가'
+        buttonTxt="추가"
       />
-      
-       {/* <div className="wrap_add">
-        <select title="타입 선택" name="type" value={formData.type} onChange={handleInputChange}>
-          <option value="">타입을 선택하세요</option>
-          {types.map((type) =>(
-            <option value={type}>{type}</option>
-          ))}
-        </select>
-        <input type="text" name="title" placeholder="타이틀 입력"onChange={handleInputChange} />
-        <input type="text" name="text" placeholder="설명 입력"onChange={handleInputChange} />
-        <button type="button"
-            onClick={()=> buttonAdd() } 
-          >추가</button>
-      </div>  */}
-      
 
       {todos.map((todo) => (
         <TodoItem
@@ -127,55 +106,41 @@ function App() {
           onModify={buttonModify}
           onDelete={buttonDel}
         />
-        /*
-        <div className={`wrap_${todo.id}`} key={todo.id}>
-          <input 
-            type="checkbox" 
-            checked={todo.done}
-            id={`ck_${todo.id}`} 
-            onChange={()=> toggleDone(todo.id) } 
-          />
-          <div className="type">{todo.type}</div>
-          <div className="text">{todo.title}</div>
-          <div className="text">{todo.text}</div>
-          <button type="button"
-            onClick={()=> buttonModify(todo) } 
-          >수정</button>
-          <button type="button"
-            onClick={()=> buttonDel(todo)}
-          >삭제</button>
-        </div>
-        */
-        
-    ))}
-    {isModify &&(
-      <TodoForm
-        formData={modifyFormData}
-        types={types}
-        handleInputChange={(e) => {
-          const { name, value } = e.target;
-          setModifyFormData(prev => ({ ...prev, [name]: value }));
-        }}
-        onSubmit={applyModify}
-        buttonTxt='수정완료'
-      />
-      /*
-      <div className="wrap_add">
-        <select title="타입 선택" name="type" value={formData.type} onChange={handleInputChange}>
-          <option value="">타입을 선택하세요</option>
-          {types.map((type) =>(
-            <option value={type}>{type}</option>
-          ))}
-        </select>
-        <input type="text" name="title" placeholder="타이틀 입력"onChange={handleInputChange} />
-        <input type="text" name="text" placeholder="설명 입력"onChange={handleInputChange} />
-        <button type="button"
-            onClick={()=> applyModify() } 
-          >수정완료</button>
+      ))}
+
+      {isModify && (
+        <TodoForm
+          formData={modifyFormData}
+          types={types}
+          handleInputChange={(e) => {
+            const { name, value } = e.target;
+            setModifyFormData(prev => ({ ...prev, [name]: value }));
+          }}
+          onSubmit={applyModify}
+          buttonTxt="수정완료"
+        />
+      )}
+    </>
+  );
+}
+
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <nav>
+          <Link to="/">할일 목록</Link> |{' '}
+          <Link to="/MakeReservation">프로그램 예약하기</Link>
+        </nav>
+        <hr />
+
+        <Routes>
+          <Route path="/" element={<TodoPage />} />
+          <Route path="/MakeReservation" element={<MakeReservation />} />
+        </Routes>
       </div>
-      */
-    )}
-    </div>
+    </Router>
   );
 }
 
