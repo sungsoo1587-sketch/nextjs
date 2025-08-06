@@ -1,8 +1,9 @@
-export default function Step1() {
+export default function Step2({ onNext, onPrev }) {
   return (
     <div>
-      <p>만 14세 이상의 본인 명의 휴대전화를 소지하셔야 예약할 수 있습니다.</p>
-      <button >다음</button>
+      <p>2222222222222</p>
+      <button onClick={onPrev}>이전</button>
+      <button onClick={onNext}>다음</button>
     </div>
   );
 }
