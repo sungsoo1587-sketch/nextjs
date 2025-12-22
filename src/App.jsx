@@ -1,7 +1,12 @@
 import { useState } from "react"
+import TodoTitle from "/src/components/TodoTitle";
+import TodoSelect from "/src/components/TodoSelect";
+import TodoList from "/src/components/TodoList";
+
+import "/src/App.css";
 
 const App = () => {
-  const [todos] = useState ([
+  const [todos, setTodos] = useState ([  // todos= 현재 목록  ,  setTodos = 추가되는것
       { id:1, type:"todo", title:"타이틀 1", desc:"상세1" },
       { id:2, type:"buy", title:"타이틀 2", desc:"상세2" },
       { id:3, type:"sell", title:"타이틀 3", desc:"상세3" },
@@ -9,120 +14,142 @@ const App = () => {
       { id:5, type:"todo", title:"타이틀 5", desc:"상세5" },
    ])
 
-    const categories = ["todo11111", "buy", "sell"];
+    const categories = ["todo", "buy", "sell"];
 
-    const [addCategory, setAddCategory] = useState("todo11111"); //useState("todo11111") 초기값 설정
+    const [addCategory, setAddCategory] = useState(""); //useState("todo11111") 초기값 설정    [초기 설정 , 변경되는 값]
+    const [checkedTodos, setCheckedTodos] = useState("");
     const [addTitle, setAddTitle] = useState("");
     const [addDesc, setAddDesc] = useState("");
-    
-    const [editCategory, setEditCategory] = useState("todo11111");
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [prevTitle, setPrevTitle] = useState("");
+
+    const [editCategory, setEditCategory] = useState("");
+    const [editId, setEditId] = useState("");
     const [editTitle, setEditTitle] = useState("");
     const [editDesc, setEditDesc] = useState("");
-    
+
 
     const handleAdd = () => {
-      console.log("신규 입력:", { addCategory, addTitle, addDesc });
+      if (!addTitle.trim() || !addDesc.trim()){
+        console.log('타이틀, 설명 입력 하세요')
+        return;
+      } // 타이틀 또는 설명 없으면 막기
+
+      const newTodo = {
+        id: Date.now(),           // 고유 id
+        type: addCategory,
+        title: addTitle,
+        desc: addDesc,
+      };
+
+      setTodos(prevTodos => [...prevTodos, newTodo]);
+
+      // 입력창 초기화
+      setAddTitle("");
+      setAddDesc("");
+      setAddCategory(categories[0]);
     };
+
+    const onEdit = (todo, isChecked) =>{
+      console.log(isChecked)
+      if(!isChecked){
+        alert('수정될 체크박스 선택해야됨');
+        return;
+      }else {
+        //todos.id
+        setIsEditing(true) //수정입력란 논블럭
+        setEditId(todo.id)
+        setEditCategory(todo.type)
+        setEditTitle(todo.title)
+        setEditDesc(todo.desc)
+
+        setPrevTitle(todo.title)
+        setCheckedTodos(prev => prev.filter(id => id !== todo.id)); // 최종 체크박스 선택해제 !== 같지 않다 다른거만 남기고 새로 생성
+        //console.log("수정 할 데이터", todo.type, todo.title, todo.desc);
+      }
+      
+    }
+    
+    const onDelete = (todo, isChecked) =>{
+      if(!isChecked) {
+        console.log(isChecked)
+        alert('삭제될 체크박스 선택해야함');
+        return;
+      }else {
+        setTodos(prev => prev.filter(item => item.id !== todo.id))
+      }
+      console.log(isChecked)
+      
+    }
+
 
     const handleEdit = () => {
+
+      if (!editTitle.trim() || !editDesc.trim()){
+        console.log('타이틀, 설명 입력 하세요')
+        return;
+      } // 타이틀 또는 설명 없으면 막기
+      setTodos (prev =>
+        prev.map(item =>
+          item.id === editId
+           ? { ...item, type: editCategory, title: editTitle, desc: editDesc }  //  ...item 기존 item 객체의 모든 속성을 복사
+            : item // 수정대상 아니면 그대로 유지
+        )
+      )
+      setIsEditing(false) 
       console.log("수정 입력:", { editCategory, editTitle, editDesc });
-    };
+    }
+
   return (
-    <>
-      {/* <div className="input-area">
-        <p>todo 신규 입력</p>
-        <select>
-          <option>todo</option>
-          <option>buy</option>
-          <option>sell</option>
-          <option>todo</option>
-          <option>todo</option>
-        </select>
-        <input type="text" placeholder="타이틀을 입력해주세요"/>
-        <input type="text" placeholder="설명을 입력해주세요"/>
-        <button type="button">입력</button>
-      </div> */}
+    //<>...</> = Fragment (불필요한 div 안 생김)
+    <> 
       <div className="input-area">
-        <p>todo 신규 입력</p>
-
-        <select value={addCategory} onChange={(e) => setAddCategory(e.target.value)}>
-          {categories.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          placeholder="타이틀을 입력해주세요"
-          value={addTitle}
-          onChange={(e) => setAddTitle(e.target.value)}
+        <TodoTitle text="신규 등록" />
+        <TodoSelect 
+          categories={categories}
+          addCategory={addCategory}
+          setAddCategory={setAddCategory}
+          addTitle={addTitle}
+          setAddTitle={setAddTitle}
+          setAddDesc={setAddDesc}
+          addDesc={addDesc}
+          handleAdd={handleAdd}
+          buttonText="추가"
         />
-
-        <input
-          type="text"
-          placeholder="설명을 입력해주세요"
-          value={addDesc}
-          onChange={(e) => setAddDesc(e.target.value)}
-        />
-
-        <button type="button" onClick={handleAdd}>입력</button>
       </div>
       
       
-      
-      <div className="list-area">
-        {todos.map(todo => (
-          <div className="todo-item" key={todo.id}>
-            <input type="checkbox" id={`ck-${todo.id}`} className="todo-checkbox" />
-            <label className="todo-type-label" htmlFor={`ck-${todo.id}`}>{todo.type}</label>
-            <strong className="todo-title">{todo.title}</strong>
-            <span className="todo-desc">{todo.desc}</span>
-            <button className="todo-edit-btn">수정</button>
-            <button className="todo-delete-btn">삭제</button>
-          </div>
-        ))}
-        
+      <TodoList
+        todos={todos}
+        checkedTodos={checkedTodos}
+        setCheckedTodos={setCheckedTodos}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+
+
+
+
+      {isEditing &&(
+        <div className="edit-area">
+          <TodoTitle 
+            text={`${prevTitle}수정 입력`}
+          />
+          <TodoSelect 
+            categories={categories}
+            editCategory={editCategory}
+            setEditCategory={setEditCategory}
+            editTitle={editTitle}
+            setEditTitle={setEditTitle}
+            editDesc={editDesc}
+            setEditDesc={setEditDesc}
+            handleEdit={handleEdit}
+            buttonText="확인"
+          />
         </div>
-
-
-      {/* <div className="edit-area">
-        <p>수정하기</p>
-        <select>
-          <option>todo</option>
-          <option>buy</option>
-          <option>sell</option>
-          <option>todo</option>
-          <option>todo</option>
-        </select>
-        <input type="text" placeholder="타이틀을 입력해주세요"/>
-        <input type="text" placeholder="설명을 입력해주세요"/>
-        <button type="button">입력</button>
-      </div> */}
-      <div className="edit-area">
-        <p>todo 수정 입력</p>
-
-        <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
-          {categories.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          placeholder="타이틀을 입력해주세요"
-          value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="설명을 입력해주세요"
-          value={editDesc}
-          onChange={(e) => setEditDesc(e.target.value)}
-        />
-
-        <button type="button" onClick={handleEdit}>입력</button>
-      </div>
+      )}
+      
       
     </>
     
