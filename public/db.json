@@ -1,0 +1,17 @@
+[
+  { "id": 1, "type": "todo", "title": "운동하기", "desc": "헬스장에서 1시간 운동" },
+  { "id": 2, "type": "buy", "title": "장보기", "desc": "우유와 계란 구매" },
+  { "id": 3, "type": "sell", "title": "중고 판매", "desc": "안 쓰는 키보드 판매" },
+  { "id": 4, "type": "todo", "title": "공부하기", "desc": "React 복습하기" },
+  { "id": 5, "type": "buy", "title": "커피 구매", "desc": "아메리카노 2잔" },
+  { "id": 6, "type": "sell", "title": "책 판매", "desc": "읽은 책 정리 후 판매" },
+  { "id": 7, "type": "todo", "title": "청소하기", "desc": "방 정리 및 청소" },
+  { "id": 8, "type": "buy", "title": "옷 구매", "desc": "여름 티셔츠 구매" },
+  { "id": 9, "type": "sell", "title": "의류 판매", "desc": "안 입는 옷 판매" },
+  { "id": 10, "type": "todo", "title": "코딩 연습", "desc": "JS 문제 3개 풀기" },
+  { "id": 11, "type": "buy", "title": "식료품 구매", "desc": "과일과 채소 구매" },
+  { "id": 12, "type": "sell", "title": "전자기기 판매", "desc": "사용 안 하는 마우스 판매" },
+  { "id": 13, "type": "todo", "title": "독서", "desc": "30분 이상 책 읽기" },
+  { "id": 14, "type": "buy", "title": "생활용품 구매", "desc": "세제와 휴지 구매" },
+  { "id": 15, "type": "sell", "title": "가전 판매", "desc": "미사용 블렌더 판매" }
+]

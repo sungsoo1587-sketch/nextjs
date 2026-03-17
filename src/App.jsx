@@ -1,34 +1,25 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Step1 from "/src/steps/Step1";
-import Step2 from "/src/steps/Step2";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./Layout";
+import Step1 from "./steps/Step1";
+import Step2 from "./steps/Step2";
 
-import "/src/App.css";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    loader: async () => {
+      const res = await fetch("/public/db.json");
+      if (!res.ok) throw new Error("db.json을 불러오지 못했습니다.");
+      return res.json();
+    },
+    children: [
+      { index: true, element: <Step1 /> },
+      { path: "step/1", element: <Step1 /> },
+      { path: "step/2", element: <Step2 /> },
+    ],
+  },
+]);
 
-const App = () => {
-
-  return (
-    //<>...</> = Fragment (불필요한 div 안 생김)
-    <> 
-      <Router>
-        <div>
-          <nav>
-            <Link to="/step/1">Step1</Link> | <Link to="/step/2">Step2</Link>
-          </nav>
-
-          <Routes>
-            <Route path="/step/1" element={<Step1 />} />
-            <Route path="/step/2" element={<Step2 />} />
-            <Route path="*" element={<Step1 />} />
-          </Routes>
-        </div>
-      </Router>
-      
-      
-    </>
-    
-    
-    
-  )
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App
