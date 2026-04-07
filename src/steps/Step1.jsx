@@ -1,96 +1,111 @@
 import { useState } from "react";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useTodoStore } from "../store/todoStore1";
 import TodoTitle from "../components/TodoTitle";
 import TodoSelect from "../components/TodoSelect";
 import TodoList from "../components/TodoList";
 import "../App.css";
 
+
 const Step1 = () => {
-  const { todos, setTodos } = useOutletContext();
-  const navigate = useNavigate();
+  const { todos, addTodo, deleteTodo, editTodo } = useTodoStore();
 
   const categories = ["todo", "buy", "sell"];
-
-  const [addCategory, setAddCategory] = useState(categories[0]);
   const [checkedTodos, setCheckedTodos] = useState([]);
-  const [addTitle, setAddTitle] = useState("");
-  const [addDesc, setAddDesc] = useState("");
+ 
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [prevTitle, setPrevTitle] = useState("");
-
-  const [editCategory, setEditCategory] = useState("");
-  const [editId, setEditId] = useState("");
-  const [editTitle, setEditTitle] = useState("");
-  const [editDesc, setEditDesc] = useState("");
-
+  //추가 
+  const [addForm, setAddForm] = useState({
+    category: categories[0],
+    title: "",
+    desc: "",
+  });
   const handleAdd = () => {
-    if (!addTitle.trim() || !addDesc.trim()) return;
-
-    const newTodo = {
-      id: Date.now(),
-      type: addCategory,
-      title: addTitle,
-      desc: addDesc,
-    };
-
-    setTodos((prev) => [...prev, newTodo]);
-    setAddTitle("");
-    setAddDesc("");
-    setAddCategory(categories[0]);
-  };
-
-  const onEdit = (todo) => {
-
-
-    setIsEditing(true);
-    setEditId(todo.id);
-    setEditCategory(todo.type);
-    setEditTitle(todo.title);
-    setEditDesc(todo.desc);
-    setPrevTitle(todo.title);
-    setCheckedTodos((prev) => prev.filter((id) => id !== todo.id));
-  };
-
-  const onDelete = (todo, isChecked) => {
-    if (!isChecked) {
-      alert("삭제할 항목을 체크하세요.");
+    if (!addForm.title.trim() || !addForm.desc.trim()) {
+      alert('타이틀 및 설명 입력')
       return;
     }
 
-    setTodos((prev) => prev.filter((item) => item.id !== todo.id));
+    const newTodo = {
+      id: Date.now(),
+      type: addForm.category,
+      title: addForm.title,
+      desc: addForm.desc,
+    };
+
+    //setTodos((prev) => [...prev, newTodo]);
+    addTodo(newTodo);
+    setAddForm({
+      category: categories[0],
+      title: "",
+      desc: "",
+    });
+  };
+
+  // 수정
+  const [editForm, setEditForm] = useState({
+    isEditing: false,
+    prevTitle: "",
+    id: null,
+    category: "",
+    title: "",
+    desc: "",
+  });
+  const onEdit = (todo) => {
+    setEditForm({
+      isEditing: true,
+      prevTitle: todo.title,
+      id: todo.id,
+      category: todo.type,
+      title: todo.title,
+      desc: todo.desc,
+    });
+
+    setCheckedTodos((prev) => prev.filter((id) => id !== todo.id));
   };
 
   const handleEdit = () => {
-    if (!editTitle.trim() || !editDesc.trim()) return;
+    if (!editForm.title.trim() || !editForm.desc.trim()) return;
 
-    setTodos((prev) =>
-      prev.map((item) =>
-        item.id === editId
-          ? { ...item, type: editCategory, title: editTitle, desc: editDesc }
-          : item
-      )
-    );
+    editTodo(editForm.id, {
+      type: editForm.category,
+      title: editForm.title,
+      desc: editForm.desc,
+    });
 
-    setIsEditing(false);
-    console.log(editTitle);
-    console.log(editDesc);
+    setEditForm({
+      isEditing: false,
+      prevTitle: "",
+      id: null,
+      category: "",
+      title: "",
+      desc: "",
+    });
   };
 
+  // 삭제
+  const onDelete = (todo) => {
+    deleteTodo(todo.id);
+  };
   return (
     <>
       <h1>Step1</h1>
-
+      <p>zustand persist 사용 ../store/todoStore1</p>
       <div className="input-area">
         <TodoTitle text="신규 등록" />
         <TodoSelect
           categories={categories}
-          addCategory={addCategory}
-          setAddCategory={setAddCategory}
-          addTitle={addTitle}
-          setAddTitle={setAddTitle}
-          addDesc={addDesc}
-          setAddDesc={setAddDesc}
+          addCategory={addForm.category}
+          setAddCategory={(value) =>
+            setAddForm((prev) => ({ ...prev, category: value }))
+          }
+          addTitle={addForm.title}
+          setAddTitle={(value) =>
+            setAddForm((prev) => ({ ...prev, title: value }))
+          }
+          addDesc={addForm.desc}
+          setAddDesc={(value) =>
+            setAddForm((prev) => ({ ...prev, desc: value }))
+          }
           handleAdd={handleAdd}
           buttonText="추가"
         />
@@ -104,24 +119,32 @@ const Step1 = () => {
         onDelete={onDelete}
       />
 
-      {isEditing && (
-        <div className="edit-area">
-          <TodoTitle text={`${prevTitle} 수정 입력`} />
-          <TodoSelect
-            categories={categories}
-            editCategory={editCategory}
-            setEditCategory={setEditCategory}
-            editTitle={editTitle}
-            setEditTitle={setEditTitle}
-            editDesc={editDesc}
-            setEditDesc={setEditDesc}
-            handleEdit={handleEdit}
-            buttonText="확인"
-          />
-        </div>
+      {editForm.isEditing && (
+        <>
+          <div className="dim"></div>
+          <div className="edit-area">
+            <TodoTitle text={`${editForm.prevTitle} 수정 입력`} />
+            <TodoSelect
+              categories={categories}
+              editCategory={editForm.category}
+              setEditCategory={(value) =>
+                setEditForm((prev) => ({ ...prev, category: value }))
+              }
+              editTitle={editForm.title}
+              setEditTitle={(value) =>
+                setEditForm((prev) => ({ ...prev, title: value }))
+              }
+              editDesc={editForm.desc}
+              setEditDesc={(value) =>
+                setEditForm((prev) => ({ ...prev, desc: value }))
+              }
+              handleEdit={handleEdit}
+              buttonText="확인"
+            />
+          </div>
+        </>
       )}
 
-      <button onClick={() => navigate("/step/2")}>다음 단계</button>
     </>
   );
 };

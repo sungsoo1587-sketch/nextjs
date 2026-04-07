@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./Layout";
+import Layout from "./layout";
 import Step1 from "./steps/Step1";
 import Step2 from "./steps/Step2";
 
@@ -7,11 +7,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    loader: async () => {
-      const res = await fetch("/public/db.json");
-      if (!res.ok) throw new Error("db.json을 불러오지 못했습니다.");
-      return res.json();
-    },
     children: [
       { index: true, element: <Step1 /> },
       { path: "step/1", element: <Step1 /> },
